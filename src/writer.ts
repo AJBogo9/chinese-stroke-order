@@ -149,23 +149,11 @@ export async function animateCharacter(): Promise<void> {
     startIndex = 0;
   }
   
-  // Check if we need to loop (when starting from position 0 after being at the end)
-  const shouldLoop = currentStrokeNum === totalStrokes - 1 || currentStrokeNum === -1;
-  
   // Highlight from start position to end
   for (let i = startIndex; i < totalStrokes && isAnimating; i++) {
     currentStrokeNum = i;
     window.dispatchEvent(new CustomEvent('strokeChanged'));
     await writer.highlightStroke(i);
-  }
-  
-  // If we need a full loop, continue from beginning to end
-  if (shouldLoop && isAnimating && startIndex === 0) {
-    for (let i = 0; i < totalStrokes && isAnimating; i++) {
-      currentStrokeNum = i;
-      window.dispatchEvent(new CustomEvent('strokeChanged'));
-      await writer.highlightStroke(i);
-    }
   }
   
   isAnimating = false;
