@@ -4,73 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chinese Character Stroke Order</title>
+    <link rel="stylesheet" href="css/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        .input-section {
-            margin: 20px 0;
-        }
-        input {
-            width: 100%;
-            padding: 12px;
-            font-size: 18px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-        input:focus {
-            outline: none;
-            border-color: #4CAF50;
-        }
-        #character-target {
-            margin: 30px auto;
-            text-align: center;
-        }
-        .button-group {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin: 20px 0;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            background-color: #4CAF50;
-            color: white;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        button:active {
-            background-color: #3d8b40;
-        }
-        .info {
-            text-align: center;
-            color: #666;
-            margin-top: 20px;
-            font-size: 14px;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
@@ -83,9 +18,9 @@
         <div id="character-target"></div>
         
         <div class="button-group">
-            <button onclick="animateCharacter()">Animate</button>
-            <button onclick="quizCharacter()">Quiz Me</button>
-            <button onclick="showOutline()">Show Outline</button>
+            <button id="animateBtn">Animate</button>
+            <button id="quizBtn">Quiz Me</button>
+            <button id="outlineBtn">Show Outline</button>
         </div>
         
         <div class="info">
@@ -93,70 +28,7 @@
         </div>
     </div>
 
-    <script>
-        let writer = null;
-        let currentChar = '你';
-
-        function createWriter(character) {
-            const target = document.getElementById('character-target');
-            target.innerHTML = '';
-            
-            writer = HanziWriter.create('character-target', character, {
-                width: 300,
-                height: 300,
-                padding: 5,
-                showOutline: true,
-                strokeColor: '#555',
-                radicalColor: '#168F16',
-                delayBetweenStrokes: 500,
-                strokeAnimationSpeed: 1,
-                onLoadCharDataError: function(error) {
-                    target.innerHTML = '<p style="color: red;">Character not found or not supported.</p>';
-                }
-            });
-            currentChar = character;
-        }
-
-        function animateCharacter() {
-            if (writer) {
-                writer.animateCharacter();
-            }
-        }
-
-        function quizCharacter() {
-            if (writer) {
-                writer.quiz({
-                    onComplete: function() {
-                        alert('Great job! 很好！');
-                    }
-                });
-            }
-        }
-
-        function showOutline() {
-            if (writer) {
-                writer.showOutline();
-            }
-        }
-
-        document.getElementById('charInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const char = this.value.trim();
-                if (char.length === 1) {
-                    createWriter(char);
-                }
-            }
-        });
-
-        document.getElementById('charInput').addEventListener('input', function(e) {
-            const char = this.value.trim();
-            if (char.length === 1) {
-                createWriter(char);
-            }
-        });
-
-        // Initialize with default character
-        createWriter(currentChar);
-    </script>
+    <script src="js/writer.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
