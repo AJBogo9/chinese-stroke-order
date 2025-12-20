@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <style>
+    text { fill: #1a1a1a; font-weight: bold; }
+    @media (prefers-color-scheme: dark) {
+      text { fill: #e5e5e5; }
+    }
+  </style>
+  <text x="50" y="70" font-size="60" text-anchor="middle" font-family="Arial, sans-serif">汉</text>
+</svg>
