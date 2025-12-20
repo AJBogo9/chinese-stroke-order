@@ -1,0 +1,16 @@
+{
+  "name": "hanzi-stroke-order",
+  "version": "1.0.0",
+  "description": "Chinese character stroke order viewer",
+  "type": "module",
+  "scripts": {
+    "build": "bun build src/main.ts --outdir dist --target browser --splitting",
+    "watch": "bun build src/main.ts --outdir dist --target browser --splitting --watch",
+    "dev": "bun --watch build src/main.ts --outdir dist --target browser --splitting"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {}
+}

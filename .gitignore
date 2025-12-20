@@ -1,0 +1,19 @@
+# Bun
+node_modules/
+bun.lockb
+
+# Build output
+dist/
+
+# TypeScript
+*.tsbuildinfo
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Environment variables
+.env
+.env.local
+.env.*.local
