@@ -26,6 +26,7 @@ function initializeApp(): void {
   const animateBtn = document.getElementById('animateBtn') as HTMLButtonElement;
   const prevStrokeBtn = document.getElementById('prevStrokeBtn') as HTMLButtonElement;
   const nextStrokeBtn = document.getElementById('nextStrokeBtn') as HTMLButtonElement;
+  const repeatStrokeBtn = document.getElementById('repeatStrokeBtn') as HTMLButtonElement;
 
   // Button event listeners
   animateBtn.addEventListener('click', () => animateCharacter());
@@ -39,6 +40,12 @@ function initializeApp(): void {
     animatePreviousStroke();
     updateStrokeInfo();
   });
+
+  // Add this event listener for the repeat button
+  repeatStrokeBtn.addEventListener('click', () => {
+    repeatCurrentStroke();
+  });
+
 
   // Input field event listeners
   charInput.addEventListener('keypress', (e: KeyboardEvent) => {
