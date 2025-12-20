@@ -1,8 +1,15 @@
-import { animateCharacter, createWriter, getCurrentChar, animateNextStroke, animatePreviousStroke, getCurrentStrokeNum, getTotalStrokes, repeatCurrentStroke } from "./writer";
+import {
+  initializeApp,
+  createWriter,
+  animateCharacter,
+  animateNextStroke,
+  animatePreviousStroke,
+  repeatCurrentStroke,
+  getCurrentStrokeNum,
+  getTotalStrokes
+} from './hanzi-writer';
 
-/**
- * Updates the stroke info display
- */
+// Update stroke info display
 function updateStrokeInfo(): void {
   const strokeInfo = document.getElementById('strokeInfo');
   if (strokeInfo) {
@@ -16,95 +23,84 @@ function updateStrokeInfo(): void {
   }
 }
 
-/**
- * Initializes the application by setting up event listeners
- * and creating the initial character writer
- */
-function initializeApp(): void {
-  // Get references to DOM elements
+// Initialize app on load
+document.addEventListener('DOMContentLoaded', () => {
+  // Initialize the app with saved or default character
+  initializeApp();
+
+  // Set up input handler
   const charInput = document.getElementById('charInput') as HTMLInputElement;
-  const animateBtn = document.getElementById('animateBtn') as HTMLButtonElement;
-  const prevStrokeBtn = document.getElementById('prevStrokeBtn') as HTMLButtonElement;
-  const nextStrokeBtn = document.getElementById('nextStrokeBtn') as HTMLButtonElement;
-  const repeatStrokeBtn = document.getElementById('repeatStrokeBtn') as HTMLButtonElement;
-
-  // Button event listeners
-  animateBtn.addEventListener('click', () => animateCharacter());
-  
-  nextStrokeBtn.addEventListener('click', () => {
-    animateNextStroke();
-    updateStrokeInfo();
-  });
-  
-  prevStrokeBtn.addEventListener('click', () => {
-    animatePreviousStroke();
-    updateStrokeInfo();
-  });
-
-  // Add this event listener for the repeat button
-  repeatStrokeBtn.addEventListener('click', () => {
-    repeatCurrentStroke();
-  });
-
-
-  // Input field event listeners
-  charInput.addEventListener('keypress', (e: KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      const char = charInput.value.trim();
-      if (char.length === 1) {
+  if (charInput) {
+    charInput.addEventListener('input', (e) => {
+      const target = e.target as HTMLInputElement;
+      const char = target.value.trim();
+      if (char && /[\u4e00-\u9fa5]/.test(char)) {
         createWriter(char);
-        updateStrokeInfo();
       }
-    }
-  });
+    });
+  }
 
-  charInput.addEventListener('input', () => {
-    const char = charInput.value.trim();
-    if (char.length === 1) {
-      createWriter(char);
-      updateStrokeInfo();
-    }
-  });
+  // Set up button handlers
+  const animateBtn = document.getElementById('animateBtn');
+  if (animateBtn) {
+    animateBtn.addEventListener('click', () => {
+      animateCharacter();
+    });
+  }
 
-  // Listen for stroke changes during animation
-  window.addEventListener('strokeChanged', updateStrokeInfo);
+  const nextStrokeBtn = document.getElementById('nextStrokeBtn');
+  if (nextStrokeBtn) {
+    nextStrokeBtn.addEventListener('click', () => {
+      animateNextStroke();
+    });
+  }
 
-  // Keyboard shortcuts
-  document.addEventListener('keydown', (e: KeyboardEvent) => {
-    // Don't trigger shortcuts if user is typing in the input field
-    if (document.activeElement === charInput) {
+  const prevStrokeBtn = document.getElementById('prevStrokeBtn');
+  if (prevStrokeBtn) {
+    prevStrokeBtn.addEventListener('click', () => {
+      animatePreviousStroke();
+    });
+  }
+
+  const repeatStrokeBtn = document.getElementById('repeatStrokeBtn');
+  if (repeatStrokeBtn) {
+    repeatStrokeBtn.addEventListener('click', () => {
+      repeatCurrentStroke();
+    });
+  }
+
+  // Set up keyboard handlers (WASD controls)
+  document.addEventListener('keydown', (e) => {
+    // Don't trigger if user is typing in input field
+    if (document.activeElement?.tagName === 'INPUT') {
       return;
     }
 
-    switch(e.key.toLowerCase()) {
+    switch (e.key.toLowerCase()) {
+      case 'w':
+        e.preventDefault();
+        animateCharacter();
+        break;
       case 'a':
         e.preventDefault();
         animatePreviousStroke();
-        updateStrokeInfo();
         break;
-      
-      case 'd':
-        e.preventDefault();
-        animateNextStroke();
-        updateStrokeInfo();
-        break;
-      
       case 's':
         e.preventDefault();
         repeatCurrentStroke();
         break;
-      
-      case 'w':
+      case 'd':
         e.preventDefault();
-        animateCharacter().then(() => updateStrokeInfo());
+        animateNextStroke();
         break;
     }
   });
 
-  // Initialize with default character
-  createWriter(getCurrentChar());
-  updateStrokeInfo();
-}
+  // Listen for stroke changes to update display
+  window.addEventListener('strokeChanged', () => {
+    updateStrokeInfo();
+  });
 
-// Wait for DOM to be fully loaded
-document.addEventListener('DOMContentLoaded', initializeApp);
+  // Initial stroke info update
+  updateStrokeInfo();
+});

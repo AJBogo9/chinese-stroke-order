@@ -81,6 +81,29 @@ export function getTotalStrokes(): number {
 }
 
 /**
+ * Saves the current character to localStorage
+ */
+function saveCurrentCharacter(character: string): void {
+  try {
+    localStorage.setItem('currentCharacter', character);
+  } catch (error) {
+    console.error('Failed to save character:', error);
+  }
+}
+
+/**
+ * Loads the saved character from localStorage
+ */
+function loadSavedCharacter(): string | null {
+  try {
+    return localStorage.getItem('currentCharacter');
+  } catch (error) {
+    console.error('Failed to load character:', error);
+    return null;
+  }
+}
+
+/**
  * Creates a new HanziWriter instance for the given character
  * @param character - The Chinese character to display
  */
@@ -91,10 +114,20 @@ export function createWriter(character: string): void {
     return;
   }
 
+  // Validate character: must be a single Chinese character
+  const cleanChar = character.trim();
+  if (!cleanChar || cleanChar.length !== 1 || !/[\u4e00-\u9fa5]/.test(cleanChar)) {
+    // Silently return - UI already prevents invalid input
+    return;
+  }
+
   target.innerHTML = '';
   currentStrokeNum = -1;
   characterData = null;
   isAnimating = false;
+
+  // Save the validated character to localStorage
+  saveCurrentCharacter(cleanChar);
 
   // Choose colors based on theme
   const darkMode = isDarkMode();
@@ -105,18 +138,22 @@ export function createWriter(character: string): void {
     padding: 5,
     showOutline: true,
     showCharacter: true,
+    // Main stroke color - much darker in light mode for better contrast
     strokeColor: darkMode ? '#e5e5e5' : '#000000',
+    // Outline should be visible but subtle
     outlineColor: darkMode ? '#505050' : '#d0d0d0',
+    // Radicals slightly lighter/darker for distinction
     radicalColor: darkMode ? '#b0b0b0' : '#606060',
+    // Highlight with soft blue accent - stands out clearly
     highlightColor: darkMode ? '#4A9EFF' : '#2B7FD9',
     strokeHighlightSpeed: 1,
     delayBetweenStrokes: 500,
     strokeAnimationSpeed: 1,
     onLoadCharDataSuccess: (data: CharacterData) => {
       characterData = data;
-      // Highlight the first stroke when character loads
+      // Highlight the last stroke when character loads
       if (writer && data.strokes.length > 0) {
-        currentStrokeNum = 0;
+        currentStrokeNum = data.strokes.length - 1;
         window.dispatchEvent(new CustomEvent('strokeChanged'));
       }
     },
@@ -127,8 +164,8 @@ export function createWriter(character: string): void {
     }
   };
 
-  writer = window.HanziWriter.create('character-target', character, options);
-  currentChar = character;
+  writer = window.HanziWriter.create('character-target', cleanChar, options);
+  currentChar = cleanChar;
 }
 
 /**
@@ -182,6 +219,7 @@ export function animateNextStroke(): void {
   }
   
   writer.highlightStroke(currentStrokeNum);
+  window.dispatchEvent(new CustomEvent('strokeChanged'));
 }
 
 /**
@@ -202,6 +240,7 @@ export function animatePreviousStroke(): void {
   }
   
   writer.highlightStroke(currentStrokeNum);
+  window.dispatchEvent(new CustomEvent('strokeChanged'));
 }
 
 /**
@@ -228,4 +267,31 @@ export function getCurrentStrokeNum(): number {
  */
 export function getCurrentChar(): string {
   return currentChar;
+}
+
+/**
+ * Initializes the application on page load
+ */
+export function initializeApp(): void {
+  const savedChar = loadSavedCharacter();
+  let characterToLoad = '你'; // Default character
+  
+  // Validate saved character
+  if (savedChar && savedChar.length === 1 && /[\u4e00-\u9fa5]/.test(savedChar)) {
+    characterToLoad = savedChar;
+  }
+  
+  // Set the input field value and ensure it's clean
+  const input = document.getElementById('charInput') as HTMLInputElement;
+  if (input) {
+    // Clear any browser autocomplete value first
+    input.value = '';
+    // Then set our character (setTimeout ensures it happens after browser autocomplete)
+    setTimeout(() => {
+      input.value = characterToLoad;
+    }, 0);
+  }
+  
+  // Create the writer with the saved/default character
+  createWriter(characterToLoad);
 }
