@@ -104,16 +104,21 @@ export function createWriter(character: string): void {
     height: 300,
     padding: 5,
     showOutline: true,
-    showCharacter: true, // Show the full character
+    showCharacter: true,
     strokeColor: darkMode ? '#e5e5e5' : '#1a1a1a',
     outlineColor: darkMode ? '#404040' : '#d0d0d0',
     radicalColor: darkMode ? '#a0a0a0' : '#606060',
-    highlightColor: darkMode ? '#4A90E2' : '#FF6B6B', // Highlight color for strokes
-    strokeHighlightSpeed: 1, // Speed of highlighting animation
+    highlightColor: darkMode ? '#4A90E2' : '#FF6B6B',
+    strokeHighlightSpeed: 1,
     delayBetweenStrokes: 500,
     strokeAnimationSpeed: 1,
     onLoadCharDataSuccess: (data: CharacterData) => {
       characterData = data;
+      // Highlight the first stroke when character loads
+      if (writer && data.strokes.length > 0) {
+        currentStrokeNum = 0;
+        window.dispatchEvent(new CustomEvent('strokeChanged'));
+      }
     },
     onLoadCharDataError: (error: Error) => {
       target.innerHTML = '<p style="color: red;">Character not found or not supported.</p>';
