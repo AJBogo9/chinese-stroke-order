@@ -2,38 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Step through the stroke order of a Chinese character, then draw it yourself in a quiz.">
   <title>Chinese Character Stroke Order</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <script type="module" src="dist/main.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h1>汉字 Stroke Order Viewer</h1>
-    
-    <div class="input-section">
-      <input type="text" id="charInput" placeholder="Enter a Chinese character (e.g., 你, 学, 好)" maxlength="1" autocomplete="off">
-    </div>
-    
-    <div id="character-target"></div>
-    
-    <div class="wasd-controls">
+  <main class="container">
+    <h1><span lang="zh-Hans">汉字</span> Stroke Order</h1>
+
+    <label for="charInput" class="field-label">Character</label>
+    <input type="text" id="charInput" lang="zh-Hans" placeholder="Type a Chinese character, e.g. 你, 学, 好" autocomplete="off" spellcheck="false">
+
+    <fieldset class="modes">
+      <legend class="sr-only">Mode</legend>
+      <label><input type="radio" name="mode" value="watch" class="sr-only" checked> Watch</label>
+      <label><input type="radio" name="mode" value="quiz" class="sr-only"> Quiz</label>
+    </fieldset>
+
+    <div id="character-target" role="img"></div>
+    <p id="status" class="status" role="status"></p>
+
+    <div id="watchControls" class="wasd-controls">
       <div class="wasd-row">
-        <button id="animateBtn" class="wasd-btn">W<br><span class="btn-label">Animate All</span></button>
+        <button type="button" class="wasd-btn" aria-keyshortcuts="W">W <span class="btn-label">Animate All</span></button>
       </div>
       <div class="wasd-row">
-        <button id="prevStrokeBtn" class="wasd-btn">A<br><span class="btn-label">Previous</span></button>
-        <button id="repeatStrokeBtn" class="wasd-btn">S<br><span class="btn-label">Repeat</span></button>
-        <button id="nextStrokeBtn" class="wasd-btn">D<br><span class="btn-label">Next</span></button>
+        <button type="button" class="wasd-btn" aria-keyshortcuts="A">A <span class="btn-label">Previous</span></button>
+        <button type="button" class="wasd-btn" aria-keyshortcuts="S">S <span class="btn-label">Repeat</span></button>
+        <button type="button" class="wasd-btn" aria-keyshortcuts="D">D <span class="btn-label">Next</span></button>
       </div>
     </div>
-    
-    <div class="stroke-info-display">
-      <span id="strokeInfo">Stroke: -</span>
+
+    <div id="quizControls" class="quiz-controls" hidden>
+      <p class="quiz-hint">Draw the strokes in order with your mouse or finger.</p>
+      <label><input type="checkbox" id="outline" checked> Show outline</label>
+      <button type="button" id="restartBtn">Restart</button>
     </div>
-  </div>
-  
-  <script type="module" src="dist/main.js"></script>
+  </main>
+
+  <footer>
+    Built with <a href="https://hanziwriter.org">Hanzi Writer</a>.
+    Stroke data from <a href="https://github.com/skishore/makemeahanzi">Make Me a Hanzi</a>.
+    <a href="https://github.com/AJBogo9/chinese-stroke-order">Source</a>
+  </footer>
 </body>
 </html>
